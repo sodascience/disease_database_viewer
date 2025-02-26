@@ -70,8 +70,7 @@ function(input, output, session) {
     map |>
       left_join(dat, by = "cbscode") |>
       ggplot(aes(fill = pmin(upperlimit, normalized_mentions))) +
-      scale_fill_gradient(na.value = "lightgrey",
-                          limits = c(0, upperlimit)) +
+      scale_fill_gradient(na.value = "#ffffcc", low = "#f7fbff", high = "#08306b", limits = c(0, upperlimit)) +
       geom_sf(color = "transparent", size = 0.3) +
       theme_minimal() +
       labs(fill = "Mention rate", title = titletext)

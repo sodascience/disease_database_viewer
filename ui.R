@@ -39,6 +39,7 @@ page_sidebar(
         step = 1
       )
     ),
+    p(span(style = "width:1rem;height:1rem;border-radius:100%;background-color: #ffffcc;"), " No data")
   ),
   card(plotOutput("map")),
   p(
