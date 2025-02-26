@@ -5,7 +5,9 @@ library(sf)
 library(tidyverse)
 library(glue)
 
-if (!dir.exists("disease_database")) {
+rootfolder <- getwd()
+
+if (!dir.exists(file.path(rootfolder, "disease_database"))) {
   print("Perform first time setup")
   tf <- tempfile(fileext = ".zip")
   url <- "https://github.com/sodascience/disease_database/releases/download/v1.0.0/disease_database_v1.0.zip"
@@ -14,10 +16,11 @@ if (!dir.exists("disease_database")) {
   unlink(tf)
 }
 
+
 print("Connecting to data")
 drv <- duckdb()
 con <- dbConnect(drv)
-db  <- tbl(con,"read_parquet('disease_database/**/*.parquet', hive_partitioning = true)")
+db  <- tbl(con, glue("read_parquet('{rootfolder}/disease_database/**/*.parquet', hive_partitioning = true)"))
 
 print("Downloading map info")
 map <- st_read("https://nlgis.nl/api/maps?year=1869", crs = "EPSG:4326")
