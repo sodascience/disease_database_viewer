@@ -32,8 +32,8 @@ map <- st_read("https://nlgis.nl/api/maps?year=1869", crs = "EPSG:4326")
 
 print("Get scale limits per disease")
 limits <- db |> group_by(disease) |> summarize(
-  lower = quantile(normalized_mentions, 0.005, na.rm = TRUE),
-  upper = quantile(normalized_mentions, 0.995, na.rm = TRUE)
+  lower = quantile(normalized_mentions, 0.001, na.rm = TRUE),
+  upper = quantile(normalized_mentions, 0.999, na.rm = TRUE)
 )
 
 print("Ready.")
@@ -102,7 +102,8 @@ function(input, output, session) {
         na.value = "#ffffcc",
         low = "#f7fbff",
         high = "#08306b",
-        limits = c(0, upperlimit)
+        limits = c(0, upperlimit),
+        transform = scales::transform_pseudo_log(sigma = upperlimit/10)
       ) +
       geom_sf(color = "transparent", size = 0.3) +
       theme_minimal() +
