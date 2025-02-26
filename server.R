@@ -9,7 +9,7 @@ if (!dir.exists("disease_database")) {
   print("Perform first time setup")
   tf <- tempfile(fileext = ".zip")
   url <- "https://github.com/sodascience/disease_database/releases/download/v1.0.0/disease_database_v1.0.zip"
-  download.file(url, tf)
+  download.file(url = url, destfile = tf)
   unzip(tf, exdir = "disease_database")
   unlink(tf)
 }
