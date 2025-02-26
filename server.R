@@ -20,7 +20,12 @@ if (!dir.exists(file.path(rootfolder, "disease_database"))) {
 print("Connecting to data")
 drv <- duckdb()
 con <- dbConnect(drv)
-db  <- tbl(con, glue("read_parquet('{rootfolder}/disease_database/**/*.parquet', hive_partitioning = true)"))
+db  <- tbl(
+  con,
+  glue(
+    "read_parquet('{rootfolder}/disease_database/**/*.parquet', hive_partitioning = true)"
+  )
+)
 
 print("Downloading map info")
 map <- st_read("https://nlgis.nl/api/maps?year=1869", crs = "EPSG:4326")
@@ -36,6 +41,26 @@ print("Ready.")
 
 # Define server logic required to draw a histogram
 function(input, output, session) {
+  output$spark <- renderPlot({
+    db |> filter(disease == local(input$disease)) |>
+      group_by(year) |>
+      summarize(mentions = mean(normalized_mentions, na.rm = TRUE)) |>
+      ggplot(aes(x = year, y = mentions)) +
+      labs(y = "", x = "") +
+      scale_x_continuous(breaks = c(1830, 1850, 1870, 1890, 1910, 1930)) +
+      geom_line(colour = "darkgrey") +
+      geom_vline(xintercept = local(input$year), colour = "#08306b") +
+      theme_minimal() +
+      theme(
+        #axis.text.x = element_text(angle = 90),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        plot.margin = unit(c(0, 0, 0, -.1), "npc")
+      )
+  }, res = 90)
+  
   output$map <- renderPlot({
     if (local(input$monthly)) {
       dat <- db |>
@@ -73,9 +98,14 @@ function(input, output, session) {
     map |>
       left_join(dat, by = "cbscode") |>
       ggplot(aes(fill = pmin(upperlimit, normalized_mentions))) +
-      scale_fill_gradient(na.value = "#ffffcc", low = "#f7fbff", high = "#08306b", limits = c(0, upperlimit)) +
+      scale_fill_gradient(
+        na.value = "#ffffcc",
+        low = "#f7fbff",
+        high = "#08306b",
+        limits = c(0, upperlimit)
+      ) +
       geom_sf(color = "transparent", size = 0.3) +
       theme_minimal() +
       labs(fill = "Mention rate", title = titletext)
-  })
+  }, res = 100)
 }

@@ -18,12 +18,14 @@ page_sidebar(
   title = "Disease database viewer",
   sidebar = sidebar(
     selectInput("disease", "Disease", choices = DISEASES),
+    p("Mentions"),
+    plotOutput("spark", height = 80),
     sliderInput(
       "year",
       "Year",
       value = 1866,
       min = 1830,
-      max = 1940,
+      max = 1939,
       step = 1,
       sep = "",
     ),
@@ -38,9 +40,9 @@ page_sidebar(
         max = 12,
         step = 1
       )
-    ),
-    p(span(style = "width:1rem;height:1rem;border-radius:100%;background-color: #ffffcc;"), " No data")
+    )
   ),
+  
   card(plotOutput("map")),
   p(
     span("ODISSEI SoDa Team, 2025."),
