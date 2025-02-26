@@ -7,7 +7,7 @@ This repository contains a basic Shiny app to interactively view our [historical
 To run the app, install a recent version of R. Then, from within R, run:
 
 ```R
-install.packages(c("shiny", "duckdb", "tidyverse", "sf", "glue"))
+install.packages(c("shiny", "bslib", "duckdb", "tidyverse", "sf", "glue"))
 shiny::runGitHub("sodascience/disease_database_viewer")
 ```
 
